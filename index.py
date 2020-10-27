@@ -19,7 +19,7 @@ def main():
 	"""
 	st.markdown(html_temp,unsafe_allow_html=True)
 
-	def file_selector(folder_path='./datasets'):
+	def file_selector(folder_path='./'):
 		filenames = os.listdir(folder_path)
 		selected_filename = st.selectbox("Select A file",filenames)
 		return os.path.join(folder_path,selected_filename)
