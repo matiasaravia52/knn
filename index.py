@@ -36,7 +36,7 @@ def main():
     df = pd.read_csv(filename)
     # Show Dataset
 
-    if st.checkbox("Ver"):
+    if st.button("Ver"):
         st.dataframe(df.head())
         df = df.replace(["C1", "C2"],[1,2])
         df = df[['x1','x2','Clase']].values
