@@ -25,10 +25,16 @@ def main():
         file = st.file_uploader("Upload file", type=["csv"])
         if st.button("Clasificar"):
             df = pd.read_csv(file)
-            df = df.replace(["C1", "C2"],[1,2])
+            clases = df[['Clase']].values
+            keys = list(set(clases.ravel()))
+            map = [(i + 1) for i in range(len(keys))]
+            df = df.replace(keys,map)
             df = df[['x1','x2','Clase']].values
-            st.write(funciones.knn_prediction(df))
-            st.pyplot()
+            for i in range(11):
+                x = i + 1
+                st.markdown("Clasificacion para k = {}".format(x))
+                st.write(funciones.knn_prediction(df),x)
+                st.pyplot()
             file.close()
         show_file = st.empty()
         if not file:
@@ -37,12 +43,19 @@ def main():
     else:
         if st.checkbox("Cargar TXT"):
             file = st.file_uploader("Upload file", type=["txt"])
-            if st.button("Clasificar"):
+            if st.button("Clasificar"):  
                 df = pd.read_csv(file, sep=";")
-                df = df.replace(["C1", "C2"],[1,2])
+                clases = df[['Clase']].values
+                keys = list(set(clases.ravel()))
+                map = [(i + 1) for i in range(len(keys))]
+                df = df.replace(keys,map)
                 df = df[['x1','x2','Clase']].values
-                st.write(funciones.knn_prediction(df))
-                st.pyplot()
+                for i in range(9):
+                    x = i + 1
+                    st.markdown("Clasificacion para k = {}".format(x))
+                    st.write(funciones.knn_prediction(df),x)
+                    st.pyplot()
+                
                 file.close()
             show_file = st.empty()
             if not file:
