@@ -8,6 +8,8 @@ import numpy as np
 # Viz Pkgs
 import matplotlib.pyplot as plt 
 import matplotlib
+import random
+from random import randrange
 
 import funciones
 
@@ -22,6 +24,7 @@ def main():
 
     FILE_TYPES = ["csv", "txt"]
     if st.checkbox("Cargar CSV"):
+        num_neighbors = st.number_input("Ingrese un nro de K vecinos proximos", min_value=0.0)
         file = st.file_uploader("Upload file", type=["csv"])
         if st.button("Clasificar"):
             df = pd.read_csv(file)
@@ -30,7 +33,11 @@ def main():
             map = [(i + 1) for i in range(len(keys))]
             df = df.replace(keys,map)
             df = df[['x1','x2','Clase']].values
-            for i in range(11):
+            scores, k_optimo = funciones.best_k(df, 5, int(num_neighbors))
+            st.markdown("El numero de k optimos es {}".format(k_optimo))
+            frame = pd.DataFrame(scores)
+            st.write(frame)
+            for i in range(k_optimo):
                 x = i + 1
                 st.markdown("Clasificacion para k = {}".format(x))
                 st.write(funciones.knn_prediction(df),x)
@@ -50,6 +57,10 @@ def main():
                 map = [(i + 1) for i in range(len(keys))]
                 df = df.replace(keys,map)
                 df = df[['x1','x2','Clase']].values
+                scores, k_optimo = funciones.best_k(df, 5, int(num_neighbors))
+                st.markdown("El numero de k optimos es {}".format(k_optimo))
+                frame = pd.DataFrame(scores)
+                st.write(frame)
                 for i in range(9):
                     x = i + 1
                     st.markdown("Clasificacion para k = {}".format(x))
