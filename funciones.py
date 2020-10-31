@@ -24,7 +24,7 @@ def knn_predict(predictors, point, k):
     sorted_distances = euclidean_distance(point, predictors,k)
     return predict_classification(sorted_distances)    
 
-def knn_prediction(points, k=5, h=0.25, plot=False):
+def knn_prediction(points, k, h=0.25, plot=False):
     from matplotlib.colors import ListedColormap
     background_colormap = ListedColormap (["hotpink","yellowgreen", "lightskyblue","navajowhite","plum"])
     observation_colormap = ListedColormap (["red","green","blue","darkorange","purple"])
@@ -97,7 +97,7 @@ def best_k(dataset, n_folds, num_neighbors):
     data_score = list()
     for i in range(num_neighbors):
         score = evaluate_algorithm(dataset, n_folds, (i+1))
-        data_score.append(score[0])
+        data_score.append(score)
         scores.append(score[-1])
         max_score = max(set(scores))
     return [data_score ,(scores.index(max_score) + 1)]

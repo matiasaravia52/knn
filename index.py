@@ -37,12 +37,13 @@ def main():
             st.markdown("El numero de k optimos es {}".format(k_optimo))
             frame = pd.DataFrame(scores)
             st.write(frame)
-            for i in range(k_optimo):
-                x = i + 1
-                st.markdown("Clasificacion para k = {}".format(x))
-                st.write(funciones.knn_prediction(df),x)
-                st.pyplot()
-            file.close()
+            st.markdown("Clasificacion con k = {}. (Optimo)".format(k_optimo))
+            st.write(funciones.knn_prediction(df,k_optimo))
+            st.pyplot()
+            st.markdown("Clasificacion para k = {} (Elegido)".format(num_neighbors))
+            st.write(funciones.knn_prediction(df,int(num_neighbors)))
+            st.pyplot()
+            file.close() 
         show_file = st.empty()
         if not file:
             show_file.info("Please upload a file of type: " + ", ".join(["csv"]))
@@ -60,13 +61,13 @@ def main():
             st.markdown("El numero de k optimos es {}".format(k_optimo))
             frame = pd.DataFrame(scores)
             st.write(frame)
-            for i in range(9):
-                x = i + 1
-                st.markdown("Clasificacion para k = {}".format(x))
-                st.write(funciones.knn_prediction(df),x)
-                st.pyplot()
-            
-            file.close()
+            st.markdown("Clasificacion con k = {}. (Optimo)".format(k_optimo))
+            st.write(funciones.knn_prediction(df,k_optimo))
+            st.pyplot()
+            st.markdown("Clasificacion para k = {} (Elegido)".format(int(num_neighbors)))
+            st.write(funciones.knn_prediction(df,int(num_neighbors)))
+            st.pyplot()
+            file.close() 
         show_file = st.empty()
         if not file:
             show_file.info("Please upload a file of type: " + ", ".join(["txt"]))

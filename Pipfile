@@ -10,6 +10,8 @@ streamlit = "*"
 pandas = "*"
 numpy = "*"
 matplotlib = "*"
+ipython = "*"
+mpld3 = "*"
 
 [requires]
 python_version = "3.6"
