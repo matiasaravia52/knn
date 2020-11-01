@@ -28,7 +28,7 @@ def knn_predict(predictors, point, k):
 
 def knn_prediction(points, k, h=0.25, plot=False):
     from matplotlib.colors import ListedColormap
-    background_colormap = ListedColormap (["hotpink","yellowgreen", "lightskyblue","navajowhite","plum"])
+    background_colormap = ListedColormap (["blue", "green", "yellow", "red"])
     observation_colormap = ListedColormap (["red","green","blue","darkorange","purple"])
     x_min, x_max, y_min, y_max = (np.min(points[:,0]) - 0.5, np.max(points[:,0]) + 0.5, np.min(points[:,1]) - 0.5, np.max(points[:,1]) + 0.5)
     xs = np.arange(x_min, x_max, h)
