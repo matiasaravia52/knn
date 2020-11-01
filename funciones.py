@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import random
 from random import randrange
+import mpld3
+from mpld3 import plugins
 
 # calculate the Euclidean distance between two vectors
 def euclidean_distance(point, dataset, num_neighbors):
@@ -43,6 +45,7 @@ def knn_prediction(points, k, h=0.25, plot=False):
     plt.pcolormesh(xx, yy, prediction_grid, cmap = background_colormap, alpha = 0.5)  
     plt.scatter(points[:,0], points[:,1], c = points[:,2], cmap = observation_colormap, s = 50, edgecolor="black", linewidth=0.3)        
     plt.show()
+    return plt
 
 # kNN Algorithm
 def k_nearest_neighbors(dataset, test, num_neighbors):
