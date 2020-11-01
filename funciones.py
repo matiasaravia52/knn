@@ -90,7 +90,8 @@ def evaluate_algorithm(dataset, n_folds, num_neighbors):
         accuracy = accuracy_metric(actual, predicted)
         scores.append(accuracy[-1])
         iterations_correct.append(accuracy)
-    return [iterations_correct , sum(scores)/float(len(scores))]
+    iterations_correct.append(sum(scores)/float(len(scores)))    
+    return iterations_correct
 
 def best_k(dataset, n_folds, num_neighbors):
     scores = list()
