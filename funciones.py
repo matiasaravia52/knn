@@ -5,8 +5,7 @@ from random import randrange
 import mpld3
 from mpld3 import plugins
 
-# calculate the Euclidean distance between two vectors
-def euclidean_distance(point, dataset, num_neighbors):
+def distancia(point, dataset, num_neighbors):
     distances = list()
     for row in dataset:
         distance = 0.0
@@ -17,42 +16,41 @@ def euclidean_distance(point, dataset, num_neighbors):
     distances.sort()
     return np.array(distances[0:num_neighbors])
 
-def predict_classification(neighbors):
+def clasificacion(neighbors):
 	output_values = [row[-1] for row in neighbors]
 	prediction = max(set(output_values), key=output_values.count)
 	return prediction
 
-def knn_predict(predictors, point, k):
-    sorted_distances = euclidean_distance(point, predictors,k)
-    return predict_classification(sorted_distances)    
+def predecir(predictors, point, k):
+    distancias = distancia(point, predictors,k)
+    return clasificacion(distancias)    
 
-def knn_prediction(points, k, h=0.25, plot=False):
+def prediccion_knn(puntos, k, h=0.25, plot=False):
     from matplotlib.colors import ListedColormap
-    background_colormap = ListedColormap (["blue", "green", "yellow", "red"])
-    observation_colormap = ListedColormap (["red","green","blue","darkorange","purple"])
-    x_min, x_max, y_min, y_max = (np.min(points[:,0]) - 0.5, np.max(points[:,0]) + 0.5, np.min(points[:,1]) - 0.5, np.max(points[:,1]) + 0.5)
+    background = ListedColormap (["blue", "green", "yellow", "red"])
+    observation = ListedColormap (["red","green","blue","darkorange","purple"])
+    x_min, x_max, y_min, y_max = (np.min(puntos[:,0]) - 0.5, np.max(puntos[:,0]) + 0.5, np.min(puntos[:,1]) - 0.5, np.max(puntos[:,1]) + 0.5)
     xs = np.arange(x_min, x_max, h)
     ys = np.arange(y_min, y_max, h)
     xx, yy = np.meshgrid(xs,ys)
 
-    prediction_grid = np.zeros(xx.shape, dtype=int)
+    grid = np.zeros(xx.shape, dtype=int)
     for i,x in enumerate(xs):
             for j,y in enumerate(ys):
-                p = np.array([x,y])
-                prediction_grid[j,i] = knn_predict(points, p, k)
+                punto = np.array([x,y])
+                grid[j,i] = predecir(puntos, punto, k)
 
     plt.figure(figsize =(15,15))
-    plt.pcolormesh(xx, yy, prediction_grid, cmap = background_colormap, alpha = 0.5)  
-    plt.scatter(points[:,0], points[:,1], c = points[:,2], cmap = observation_colormap, s = 50, edgecolor="black", linewidth=0.3)        
+    plt.pcolormesh(xx, yy, grid, cmap = background, alpha = 0.5)  
+    plt.scatter(puntos[:,0], puntos[:,1], c = puntos[:,2], cmap = observation, s = 50, edgecolor="black", linewidth=0.3)        
     plt.show()
     return plt
 
-# kNN Algorithm
 def k_nearest_neighbors(dataset, test, num_neighbors):
     predictions = list()
     for row in test:
-        neighbors = euclidean_distance(row, dataset, num_neighbors)
-        output = predict_classification(neighbors)
+        neighbors = distancia(row, dataset, num_neighbors)
+        output = clasificacion(neighbors)
         predictions.append(output)
     return np.array(predictions)
 
@@ -68,7 +66,6 @@ def cross_validation_split(dataset, n_folds):
 		dataset_split.append(np.array(fold))
 	return dataset_split
 
-# Calculate accuracy percentage
 def accuracy_metric(actual, predicted):
 	correct = 0
 	for i in range(len(actual)):
@@ -76,7 +73,6 @@ def accuracy_metric(actual, predicted):
 			correct += 1
 	return [correct , (correct / float(len(actual)) * 100.0)]
 
-# Evaluate an algorithm using a cross validation split
 def evaluate_algorithm(dataset, n_folds, num_neighbors):
     iterations_correct = list()
     folds = cross_validation_split(dataset, n_folds)
