@@ -25,13 +25,13 @@ def predecir(predictors, point, k):
     distancias = distancia(point, predictors,k)
     return clasificacion(distancias)    
 
-def prediccion_knn(puntos, k, h=0.25, plot=False):
+def prediccion_knn(puntos, k, step=0.25, plot=False):
     from matplotlib.colors import ListedColormap
     background = ListedColormap (["blue", "green", "yellow", "red"])
     observation = ListedColormap (["red","green","blue","darkorange","purple"])
     x_min, x_max, y_min, y_max = (np.min(puntos[:,0]) - 0.5, np.max(puntos[:,0]) + 0.5, np.min(puntos[:,1]) - 0.5, np.max(puntos[:,1]) + 0.5)
-    xs = np.arange(x_min, x_max, h)
-    ys = np.arange(y_min, y_max, h)
+    xs = np.arange(x_min, x_max, step)
+    ys = np.arange(y_min, y_max, step)
     xx, yy = np.meshgrid(xs,ys)
 
     grid = np.zeros(xx.shape, dtype=int)
