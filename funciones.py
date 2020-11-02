@@ -43,8 +43,9 @@ def prediccion_knn(puntos, k, step=0.25, plot=False):
     plt.figure(figsize =(15,15))
     plt.pcolormesh(xx, yy, grid, cmap = background, alpha = 0.5)  
     scatter = plt.scatter(puntos[:,0], puntos[:,1], c = puntos[:,2], cmap = observation, s = 50, edgecolor="black", linewidth=0.3)  
-    classes = ['Clase 1', 'Clase 2']
-    plt.legend(handles=scatter.legend_elements()[0], labels=classes)    
+    keys = list(set(points[:,2].ravel()))
+    classes = ["Clase {}".format(i + 1) for i in range(len(keys))]
+    plt.legend(handles=scatter.legend_elements()[0], labels=classes)   
     plt.show()
     return plt
 
