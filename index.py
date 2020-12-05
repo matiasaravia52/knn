@@ -41,61 +41,58 @@ def calc_optimo(df, num_neighbors):
     columns.append("Accuracy")
     frame = pd.DataFrame(scores,index=["K{}".format(i+1) for i in range(int(num_neighbors))] ,columns=columns)
     st.write(frame)
+    return k_optimo
+
+def graficar_optimo(df,k_optimo):
     st.markdown("Clasificacion con k = {}. (Optimo)".format(k_optimo))
     fig = funciones.prediccion_knn(df,k_optimo)
-    st.pyplot(fig)
+    st.pyplot(fig)    
 
-def load_csv(data_file, num_neighbors, checked_stocks):
-    df = pd.read_csv(data_file)
+def load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep):
+    show_file = st.empty()
+    if sep is not None:
+        df = pd.read_csv(file, sep = sep)
+    else:
+        df = pd.read_csv(file)     
     df = format_dataset(df)
     for stock in checked_stocks:
-        if stock == "Clasificar":
-            clasificar(df, num_neighbors)
-        elif stock == "Calcular el K optimo":
-            calc_optimo(df, num_neighbors)
+        if stock == "Ingresar la cantidad de graficos a realizar":
+            clasificar(df, num_neighbors_graficar)
+        elif stock == "Calcular el K optimo" and "Graficar el K optimo" in checked_stocks:
+            k_optimo = calc_optimo(df, num_neighbors)  
+            graficar_optimo(df,k_optimo)
+        elif stock == "Calcular el K optimo" and "Graficar el K optimo" not in checked_stocks:
+            k_optimo = calc_optimo(df, num_neighbors)
+        elif "Calcular el K optimo" not in checked_stocks and "Graficar el K optimo" in checked_stocks:
+            show_file.error("Para graficar debe calcular el k optimo")
+            return
 
-def load_txt(data_file, num_neighbors, checked_stocks):
-    df = pd.read_csv(data_file, sep=";")
-    df = format_dataset(df)
-    for stock in checked_stocks:
-        if stock == "Clasificar":
-            clasificar(df, num_neighbors)
-        elif stock == "Calcular el K optimo":
-            calc_optimo(df, num_neighbors)            
+     
 def main():  
     html_temp = """
     <div style="background-color:tomato;"><p style="color:white;font-size:50px;padding:10px">Algoritmo Knn</p></div>
     """
     st.markdown(html_temp,unsafe_allow_html=True)
-    if st.sidebar.checkbox("Cargar CSV"):
-        num_neighbors = st.number_input("Ingrese un nro de K vecinos proximos como maximo superior", min_value=0, format="%i", value=1, step=1)
-        data_file = st.file_uploader("Cargar dataset", type=["csv"])
+    file = st.file_uploader("Cargar dataset")
+    if file is not None:
+        file.seek(0)
+        sep = st.selectbox("Seleccione el separador a utilizar", [None, ";", "Tab"])
         st.markdown("**Seleccione lo que desea realizar: **")
-        stocks = ["Clasificar", "Calcular el K optimo"]
+        stocks = ["Ingresar la cantidad de graficos a realizar", "Calcular el K optimo", "Graficar el K optimo"]
         check_boxes = [st.checkbox(stock, key=stock) for stock in stocks]
         checked_stocks = [stock for stock, checked in zip(stocks, check_boxes) if checked]
-        if data_file is not None and num_neighbors is not None:
+        if file is not None:
+            num_neighbors_graficar = 0
+            num_neighbors = 0
+            if "Ingresar la cantidad de graficos a realizar" in checked_stocks:
+                num_neighbors_graficar = st.number_input("Ingrese la cantidad de K a graficar", min_value=0, format="%i", value=1, step=1)
+            if "Calcular el K optimo" in checked_stocks:
+                num_neighbors = st.number_input("Ingrese un nro de K vecinos proximos como maximo superior", min_value=0, format="%i", value=1, step=1)
             if st.button("Procesar"):
-                load_csv(data_file, num_neighbors, checked_stocks)
+                load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep)
         show_file = st.empty()
-        if not data_file:
+        if not file:
             show_file.info("Cargue un dataset con formato: " + ", ".join(["csv"]))
-            return
-    elif st.sidebar.checkbox("Cargar TXT"):
-        num_neighbors = st.number_input("Ingrese un nro de K vecinos proximos como maximo superior", min_value=0, format="%i", value=1, step=1)
-        num_neighbors_static[num_neighbors] = num_neighbors
-        data_file = st.file_uploader("Cargar dataset", type=["txt"])
-        data_file_static[data_file] = data_file
-        st.markdown("**Seleccione lo que desea realizar: **")
-        stocks = ["Clasificar", "Calcular el K optimo"]
-        check_boxes = [st.checkbox(stock, key=stock) for stock in stocks]
-        checked_stocks = [stock for stock, checked in zip(stocks, check_boxes) if checked]
-        if data_file is not None and num_neighbors is not None:
-            if st.button("Procesar"):
-                load_txt(data_file, num_neighbors, checked_stocks)
-        show_file = st.empty()
-        if not data_file:
-            show_file.info("Cargue un dataset con formato: " + ", ".join(["txt"]))
             return
       
 if __name__ == '__main__':
