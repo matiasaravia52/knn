@@ -89,6 +89,7 @@ def main():
                         return
                     load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep)
             if not file:
+                show_file = st.empty()
                 show_file.info("Cargue un dataset con formato: " + ", ".join([".csv o .txt"]))
                 return
     except:
