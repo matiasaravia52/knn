@@ -93,7 +93,7 @@ def main():
                 show_file.info("Cargue un dataset con formato: " + ", ".join([".csv o .txt"]))
                 return
     except:
-      show_file = st.empty()
+        show_file = st.empty()
         show_file.error("Ocurrio un error, intente cargar un nuevo dataset y verifique el separador a utilizar")
       
 if __name__ == '__main__':
