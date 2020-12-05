@@ -9,24 +9,15 @@ from mpld3 import plugins
 
 # distancia de un punto dado a cada punto de dataset, y como resultado obtenemos un numero dado de los puntos mas cercanos  
 def distancia_validation(point, dataset, num_neighbors):
-  distances = list()
-  for row in dataset:
-    distance = 0.0
-    for i in range(2):
-      distance += (point[i] - row[i])**2
-    distance = np.sqrt(distance)
-    distances.append([distance, row[-1]])
+  distances = [distancia_heuclidiana(point, row) for row in dataset]
   distances.sort()
   return np.array(distances[0:num_neighbors])
 
+def distancia_heuclidiana(point, row):
+  return [np.sqrt(((point[0] - row[0])**2 + (point[1] - row[1])**2)), row[-1]]
+
 def distancia(point, dataset):
-  distances = list()
-  for row in dataset:
-    distance = 0.0
-    for i in range(2):
-      distance += (point[i] - row[i])**2
-    distance = np.sqrt(distance)
-    distances.append([distance, row[-1]])
+  distances = [distancia_heuclidiana(point, row) for row in dataset]
   distances.sort()
   return np.array(distances)    
 
@@ -62,7 +53,7 @@ def prediccion_knn(puntos, k_max, step=0.25, plot=False):
       punto = np.array([x,y])
       grid_distancias[j,i] = distancia(punto,puntos)
 
-  for k_nei in range(k_max) :
+  for k_nei in range(k_max):
     grid = np.zeros(xx.shape, dtype=int)
     for i,x in enumerate(xs):
       for j,y in enumerate(ys):

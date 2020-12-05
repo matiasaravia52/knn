@@ -66,34 +66,34 @@ def main():
     """
     st.markdown(html_temp,unsafe_allow_html=True)
     st.markdown("**Cargar el dataset a utilizar **")
-    try:
-        file = st.file_uploader("Seleccione un dataset")
+    #try:
+    file = st.file_uploader("Seleccione un dataset")
+    if file is not None:
+        file.seek(0)
+        sep = st.selectbox("Seleccione el separador a utilizar", [None, ";", "Tab"])
+        st.markdown("**Seleccione lo que desea realizar: **")
+        stocks = ["Ingresar la cantidad de graficos a realizar", "Calcular el K optimo", "Graficar el K optimo"]
+        check_boxes = [st.checkbox(stock, key=stock) for stock in stocks]
+        checked_stocks = [stock for stock, checked in zip(stocks, check_boxes) if checked]
         if file is not None:
-            file.seek(0)
-            sep = st.selectbox("Seleccione el separador a utilizar", [None, ";", "Tab"])
-            st.markdown("**Seleccione lo que desea realizar: **")
-            stocks = ["Ingresar la cantidad de graficos a realizar", "Calcular el K optimo", "Graficar el K optimo"]
-            check_boxes = [st.checkbox(stock, key=stock) for stock in stocks]
-            checked_stocks = [stock for stock, checked in zip(stocks, check_boxes) if checked]
-            if file is not None:
-                num_neighbors_graficar = 0
-                num_neighbors = 0
-                if "Ingresar la cantidad de graficos a realizar" in checked_stocks:
-                    num_neighbors_graficar = st.number_input("Ingrese la cantidad de K que desea graficar", min_value=0, format="%i", value=1, step=1)
-                if "Calcular el K optimo" in checked_stocks:
-                    num_neighbors = st.number_input("Ingrese un nro de K vecinos proximos como maximo superior", min_value=0, format="%i", value=1, step=1)
-                if st.button("Procesar"):
-                    if "Calcular el K optimo" not in checked_stocks and "Graficar el K optimo" in checked_stocks:
-                        show_file = st.empty()
-                        show_file.error("Para graficar debe calcular el k optimo")
-                        return
-                    load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep)
-            if not file:
-                show_file.info("Cargue un dataset con formato: " + ", ".join([".csv o .txt"]))
-                return
-    except:
-        show_file = st.empty()
-        show_file.error("Ocurrio un error, intente cargar un nuevo dataset y verifique el separador a utilizar")
+            num_neighbors_graficar = 0
+            num_neighbors = 0
+            if "Ingresar la cantidad de graficos a realizar" in checked_stocks:
+                num_neighbors_graficar = st.number_input("Ingrese la cantidad de K que desea graficar", min_value=0, format="%i", value=1, step=1)
+            if "Calcular el K optimo" in checked_stocks:
+                num_neighbors = st.number_input("Ingrese un nro de K vecinos proximos como maximo superior", min_value=0, format="%i", value=1, step=1)
+            if st.button("Procesar"):
+                if "Calcular el K optimo" not in checked_stocks and "Graficar el K optimo" in checked_stocks:
+                    show_file = st.empty()
+                    show_file.error("Para graficar debe calcular el k optimo")
+                    return
+                load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep)
+        if not file:
+            show_file.info("Cargue un dataset con formato: " + ", ".join([".csv o .txt"]))
+            return
+    #except:
+    #   show_file = st.empty()
+    #    show_file.error("Ocurrio un error, intente cargar un nuevo dataset y verifique el separador a utilizar")
       
 if __name__ == '__main__':
     main()
