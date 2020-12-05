@@ -1,10 +1,5 @@
 import os
 import streamlit as st 
-import streamlit.components.v1 as stc
-from typing import Dict
-
-import io
-from io import StringIO
 
 # EDA Pkgs
 import pandas as pd 
@@ -30,7 +25,7 @@ def format_dataset(df):
     return df
 
 def clasificar(df, num_neighbors):
-    st.markdown("**Graficamos los K de 1 a 10 primeros**")
+    st.markdown("**Graficamos los primeros {} K**".format(num_neighbors))
     funciones.prediccion_knn(df,num_neighbors)  
 
 def calc_optimo(df, num_neighbors):
@@ -63,9 +58,6 @@ def load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep):
             graficar_optimo(df,k_optimo)
         elif stock == "Calcular el K optimo" and "Graficar el K optimo" not in checked_stocks:
             k_optimo = calc_optimo(df, num_neighbors)
-        elif "Calcular el K optimo" not in checked_stocks and "Graficar el K optimo" in checked_stocks:
-            show_file.error("Para graficar debe calcular el k optimo")
-            return
 
      
 def main():  
@@ -73,27 +65,35 @@ def main():
     <div style="background-color:tomato;"><p style="color:white;font-size:50px;padding:10px">Algoritmo Knn</p></div>
     """
     st.markdown(html_temp,unsafe_allow_html=True)
-    file = st.file_uploader("Cargar dataset")
-    if file is not None:
-        file.seek(0)
-        sep = st.selectbox("Seleccione el separador a utilizar", [None, ";", "Tab"])
-        st.markdown("**Seleccione lo que desea realizar: **")
-        stocks = ["Ingresar la cantidad de graficos a realizar", "Calcular el K optimo", "Graficar el K optimo"]
-        check_boxes = [st.checkbox(stock, key=stock) for stock in stocks]
-        checked_stocks = [stock for stock, checked in zip(stocks, check_boxes) if checked]
+    st.markdown("**Cargar el dataset a utilizar **")
+    try:
+        file = st.file_uploader("Seleccione un dataset")
         if file is not None:
-            num_neighbors_graficar = 0
-            num_neighbors = 0
-            if "Ingresar la cantidad de graficos a realizar" in checked_stocks:
-                num_neighbors_graficar = st.number_input("Ingrese la cantidad de K a graficar", min_value=0, format="%i", value=1, step=1)
-            if "Calcular el K optimo" in checked_stocks:
-                num_neighbors = st.number_input("Ingrese un nro de K vecinos proximos como maximo superior", min_value=0, format="%i", value=1, step=1)
-            if st.button("Procesar"):
-                load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep)
+            file.seek(0)
+            sep = st.selectbox("Seleccione el separador a utilizar", [None, ";", "Tab"])
+            st.markdown("**Seleccione lo que desea realizar: **")
+            stocks = ["Ingresar la cantidad de graficos a realizar", "Calcular el K optimo", "Graficar el K optimo"]
+            check_boxes = [st.checkbox(stock, key=stock) for stock in stocks]
+            checked_stocks = [stock for stock, checked in zip(stocks, check_boxes) if checked]
+            if file is not None:
+                num_neighbors_graficar = 0
+                num_neighbors = 0
+                if "Ingresar la cantidad de graficos a realizar" in checked_stocks:
+                    num_neighbors_graficar = st.number_input("Ingrese la cantidad de K que desea graficar", min_value=0, format="%i", value=1, step=1)
+                if "Calcular el K optimo" in checked_stocks:
+                    num_neighbors = st.number_input("Ingrese un nro de K vecinos proximos como maximo superior", min_value=0, format="%i", value=1, step=1)
+                if st.button("Procesar"):
+                    if "Calcular el K optimo" not in checked_stocks and "Graficar el K optimo" in checked_stocks:
+                        show_file = st.empty()
+                        show_file.error("Para graficar debe calcular el k optimo")
+                        return
+                    load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep)
+            if not file:
+                show_file.info("Cargue un dataset con formato: " + ", ".join([".csv o .txt"]))
+                return
+    except:
         show_file = st.empty()
-        if not file:
-            show_file.info("Cargue un dataset con formato: " + ", ".join(["csv"]))
-            return
+        show_file.error("Ocurrio un error, intente cargar un nuevo dataset y verifique el separador a utilizar")
       
 if __name__ == '__main__':
     main()
