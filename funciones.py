@@ -63,9 +63,6 @@ def distancia_heuclidiana(point, row):
 
 # distancia de un punto dado a cada punto de dataset, y como resultado obtenemos un numero dado de los puntos mas cercanos  
 def distancia_validation(point, dataset, num_neighbors):
-  print(point, "point")
-  print(dataset, "dataset")
-  print(num_neighbors, "num")
   distance = 0.0
   for i in range(2):
     distance += (point[i] - dataset[:,i:i+1])**2
@@ -150,11 +147,11 @@ def split(points):
   return (training, test)  
 
 def test_k(training, test, k):
-  test_with_predictions = np.concatenate((test, np.zeros((len(test), 2))), axis = 1)
-  for point in test_with_predictions:
-    point[3] = k_nearest_neighbors(training, point, k)
+  predicciones = np.array(())
+  for point in test:
+    predicciones.append(predicciones, k_nearest_neighbors(training, point, k))
   
-  positive_predictions = np.where(test_with_predictions[:,2] == test_with_predictions[:,3])[0].size
+  positive_predictions = np.where(test[:,2] == predicciones[:,2])[0].size
   
   return positive_predictions / len(test)  
 
