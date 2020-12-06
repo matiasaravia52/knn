@@ -75,6 +75,7 @@ def main():
             if file is not None:
                 num_neighbors_graficar = 0
                 num_neighbors = 0
+                n_folds = 0
                 if "Ingresar la cantidad de graficos a realizar" in checked_stocks:
                     num_neighbors_graficar = st.number_input("Ingrese la cantidad de K que desea graficar", min_value=0, format="%i", value=1, step=1)
                 if "Calcular el K optimo" in checked_stocks:
