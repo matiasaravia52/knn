@@ -39,7 +39,7 @@ def calc_optimo(df, num_neighbors, n_folds):
 
 def graficar_optimo(df,k_optimo):
     st.markdown("Clasificacion con k = {}. (Optimo)".format(k_optimo))
-    funciones.prediccion_knn(df,k_optimo)  
+    funciones.graficar_k_optimo(df,k_optimo)  
 
 def load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep, n_folds):
     if sep is not None:

@@ -1,6 +1,7 @@
 import os
 import streamlit as st 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt 
 import random
 from random import randrange
@@ -31,7 +32,7 @@ def graficar_k_neighbors(xs, ys, xx, yy, grid_distancias, k_nei, puntos):
   for i,x in enumerate(xs):
     for j,y in enumerate(ys):
       distancias_calculadas = grid_distancias[j,i]
-      grid[j,i] = clasificacion(distancias_calculadas, (k_nei + 1))            
+      grid[j,i] = clasificacion(distancias_calculadas, k_nei)            
 
   plt.figure(figsize =(15,15))
   plt.pcolormesh(xx, yy, grid, cmap = background, alpha = 0.5)  
@@ -39,7 +40,7 @@ def graficar_k_neighbors(xs, ys, xx, yy, grid_distancias, k_nei, puntos):
   keys = list(set(puntos[:,2].ravel()))
   classes = ["Clase {}".format(i + 1) for i in range(len(keys))]
   plt.legend(handles=scatter.legend_elements()[0], labels=classes)   
-  st.markdown("Clasificacion con k = {}.".format(k_nei+1))
+  st.markdown("Clasificacion con k = {}.".format(k_nei))
   st.pyplot(plt.show())
 
 # funcion principal para graficar
@@ -55,17 +56,30 @@ def prediccion_knn(puntos, k_max, step=0.25, plot=False):
       punto = np.array([x,y])
       grid_distancias[j,i] = distancia(punto,puntos)
 
-  [graficar_k_neighbors(xs, ys, xx, yy,grid_distancias, k_nei, puntos) for k_nei in range(k_max)]
+  [graficar_k_neighbors(xs, ys, xx, yy,grid_distancias, (k_nei + 1), puntos) for k_nei in range(k_max)]
 
-# devuelve la distancia heuclidiana
-def distancia_heuclidiana(point, row):
-  return [np.sqrt(((point[0] - row[0])**2 + (point[1] - row[1])**2)), row[-1]]
+def graficar_k_optimo(puntos, k_optimo, step=0.25, plot=False):
+  x_min, x_max, y_min, y_max = (np.min(puntos[:,0]) - 0.5, np.max(puntos[:,0]) + 0.5, np.min(puntos[:,1]) - 0.5, np.max(puntos[:,1]) + 0.5)
+  xs = np.arange(x_min, x_max, step)
+  ys = np.arange(y_min, y_max, step)
+  xx, yy = np.meshgrid(xs,ys)
+
+  grid_distancias = np.zeros(xx.shape, dtype=list)
+  for i,x in enumerate(xs):
+    for j,y in enumerate(ys):
+      punto = np.array([x,y])
+      grid_distancias[j,i] = distancia(punto,puntos)
+
+  graficar_k_neighbors(xs, ys, xx, yy,grid_distancias, k_optimo, puntos)
 
 # distancia de un punto dado a cada punto de dataset, y como resultado obtenemos un numero dado de los puntos mas cercanos  
 def distancia_validation(point, dataset, num_neighbors):
-  distances = [distancia_heuclidiana(point, row) for row in dataset]
-  distances.sort()
-  return np.array(distances[0:num_neighbors])
+  distance = 0.0
+  for i in range(2):
+    distance += (point[i] - dataset[:,i:i+1])**2
+  distances = np.concatenate((np.sqrt(distance),dataset[:,2:3]),axis=1)  
+  distances = distances[distances[:,0].argsort()]    
+  return distances[0:num_neighbors] 
 
 # en base al resultado anterior de los puntos mas cercanos al dado, clasifica teniendo en cuenta de que clase es la mayoria
 def clasificacion_validation(neighbors):
@@ -108,12 +122,9 @@ def evaluate_algorithm(dataset, n_folds, num_neighbors):
   folds = cross_validation_split(dataset, n_folds)
   scores = list()
   for i in range(len(folds)):
-    dataset2 = list()
-    for j in range(len(dataset)):
-      inicio_intervalo = (i*len(folds[i]))
-      fin_intervalo = (inicio_intervalo + len(folds[i]) )
-      if j not in range(inicio_intervalo , fin_intervalo): 
-        dataset2.append(dataset[j])  
+    inicio_intervalo = (i*(len(folds[i])+1)) 
+    fin_intervalo = (inicio_intervalo + len(folds[i])) 
+    dataset2 = dataset[inicio_intervalo:fin_intervalo]
     predicted = k_nearest_neighbors(dataset2, folds[i], num_neighbors)
     actual = [int(row[-1]) for row in folds[i]]
     accuracy = accuracy_metric(actual, predicted)
