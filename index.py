@@ -35,6 +35,8 @@ def calc_optimo(df, num_neighbors, n_folds):
     columns.append("Accuracy")
     frame = pd.DataFrame(scores,index=["K{}".format(i+1) for i in range(int(num_neighbors))] ,columns=columns)
     st.write(frame)
+    frame_two = funciones.test_multiple_knn(df)
+    st.write(frame_two)
     return k_optimo
 
 def graficar_optimo(df,k_optimo):
