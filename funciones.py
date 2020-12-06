@@ -1,7 +1,6 @@
 import os
 import streamlit as st 
 import numpy as np
-import pandas as pd 
 import matplotlib.pyplot as plt 
 import random
 from random import randrange
@@ -112,13 +111,12 @@ def evaluate_algorithm(dataset, n_folds, num_neighbors):
   folds = cross_validation_split(dataset, n_folds)
   scores = list()
   for i in range(len(folds)):
-    list_element = list()
+    dataset2 = np.zeros(dataset.shape, dtype=float)
     for j in range(len(dataset)):
       inicio_intervalo = (i*len(folds[i]))
       fin_intervalo = (inicio_intervalo + len(folds[i]) )
       if j not in range(inicio_intervalo , fin_intervalo): 
-        list_element.append(dataset[j])
-    dataset2 = pd.DataFrame(data=list_element)       
+        dataset2[j] = dataset[j]  
     predicted = k_nearest_neighbors(dataset2, folds[i], num_neighbors)
     actual = [int(row[-1]) for row in folds[i]]
     accuracy = accuracy_metric(actual, predicted)
