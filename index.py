@@ -28,11 +28,10 @@ def clasificar(df, num_neighbors):
     st.markdown("**Graficamos los primeros {} K**".format(num_neighbors))
     funciones.prediccion_knn(df,num_neighbors)  
 
-def calc_optimo(df, num_neighbors):
-    scores, k_optimo = funciones.best_k(df, 5, int(num_neighbors))
-    st.markdown("**Realizamos una validacion cruzada para determinar el K optimo**")
+def calc_optimo(df, num_neighbors, n_folds):
+    scores, k_optimo = funciones.best_k(df, int(n_folds), int(num_neighbors))
     st.markdown("El numero de k optimos es {}".format(k_optimo))
-    columns = ["Fold{}".format(i+1) for i in range(5)]
+    columns = ["Fold{}".format(i+1) for i in range(int(n_folds))]
     columns.append("Accuracy")
     frame = pd.DataFrame(scores,index=["K{}".format(i+1) for i in range(int(num_neighbors))] ,columns=columns)
     st.write(frame)
@@ -40,11 +39,9 @@ def calc_optimo(df, num_neighbors):
 
 def graficar_optimo(df,k_optimo):
     st.markdown("Clasificacion con k = {}. (Optimo)".format(k_optimo))
-    fig = funciones.prediccion_knn(df,k_optimo)
-    st.pyplot(fig)    
+    funciones.prediccion_knn(df,k_optimo)  
 
-def load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep):
-    show_file = st.empty()
+def load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep, n_folds):
     if sep is not None:
         df = pd.read_csv(file, sep = sep)
     else:
@@ -54,10 +51,10 @@ def load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep):
         if stock == "Ingresar la cantidad de graficos a realizar":
             clasificar(df, num_neighbors_graficar)
         elif stock == "Calcular el K optimo" and "Graficar el K optimo" in checked_stocks:
-            k_optimo = calc_optimo(df, num_neighbors)  
+            k_optimo = calc_optimo(df, num_neighbors, n_folds)  
             graficar_optimo(df,k_optimo)
         elif stock == "Calcular el K optimo" and "Graficar el K optimo" not in checked_stocks:
-            k_optimo = calc_optimo(df, num_neighbors)
+            k_optimo = calc_optimo(df, num_neighbors, n_folds)
 
      
 def main():  
@@ -81,18 +78,21 @@ def main():
                 if "Ingresar la cantidad de graficos a realizar" in checked_stocks:
                     num_neighbors_graficar = st.number_input("Ingrese la cantidad de K que desea graficar", min_value=0, format="%i", value=1, step=1)
                 if "Calcular el K optimo" in checked_stocks:
+                    st.markdown("**Realizaremos una validacion cruzada para determinar el K optimo**")
                     num_neighbors = st.number_input("Ingrese un nro de K vecinos proximos como maximo superior", min_value=0, format="%i", value=1, step=1)
+                    n_folds = st.number_input("Ingrese la cantidad de particiones que desea para realizar la validacion", min_value=0, format="%i", value=1, step=1)
                 if st.button("Procesar"):
                     if "Calcular el K optimo" not in checked_stocks and "Graficar el K optimo" in checked_stocks:
                         show_file = st.empty()
                         show_file.error("Para graficar debe calcular el k optimo")
                         return
-                    load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep)
+                    load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep, n_folds)
             if not file:
                 show_file = st.empty()
                 show_file.info("Cargue un dataset con formato: " + ", ".join([".csv o .txt"]))
                 return
-    except:
+    except Exception as ex:
+        print(ex)
         show_file = st.empty()
         show_file.error("Ocurrio un error, intente cargar un nuevo dataset y verifique el separador a utilizar")
       
