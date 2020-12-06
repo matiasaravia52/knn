@@ -80,7 +80,7 @@ def clasificacion_validation(neighbors):
 def k_nearest_neighbors(dataset, test, num_neighbors):
   predictions = list()
   for row in test:
-    neighbors = distancia_validation(row, np.array(dataset), num_neighbors)
+    neighbors = distancia_validation(row, dataset, num_neighbors)
     output = clasificacion_validation(neighbors)
     predictions.append(output)
   return np.array(predictions)
