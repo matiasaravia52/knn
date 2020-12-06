@@ -80,7 +80,7 @@ def clasificacion_validation(neighbors):
 def k_nearest_neighbors(dataset, test, num_neighbors):
   predictions = list()
   for row in test:
-    neighbors = distancia_validation(row, dataset, num_neighbors)
+    neighbors = distancia_validation(row, np.array(dataset), num_neighbors)
     output = clasificacion_validation(neighbors)
     predictions.append(output)
   return np.array(predictions)
@@ -111,12 +111,12 @@ def evaluate_algorithm(dataset, n_folds, num_neighbors):
   folds = cross_validation_split(dataset, n_folds)
   scores = list()
   for i in range(len(folds)): # i = 1 a 5
-    dataset2 = np.zeros(dataset.shape, dtype=float)
+    dataset2 = np.array(())
     for j in range(len(dataset)): # j = 1 a 200
       inicio_intervalo = (i*len(folds[i])) # inicio_intervalo = 40
       fin_intervalo = (inicio_intervalo + len(folds[i])) # fin_intervalo = 80
       if j not in range(inicio_intervalo , fin_intervalo): 
-        dataset2[j] = dataset[j]  
+        np.append(dataset2, dataset[j])  
     predicted = k_nearest_neighbors(dataset2, folds[i], num_neighbors)
     actual = [int(row[-1]) for row in folds[i]]
     accuracy = accuracy_metric(actual, predicted)
