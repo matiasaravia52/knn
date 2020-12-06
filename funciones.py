@@ -149,7 +149,7 @@ def split(points):
 def test_k(training, test, k):
   test_with_predictions = np.concatenate((test, np.zeros((len(test), 2))), axis = 1)
   for point in test_with_predictions:
-      point[3] = k_nearest_neighbors(training, point, k)
+    point[3] = k_nearest_neighbors(training, point, k)
   
   positive_predictions = np.where(test_with_predictions[:,2] == test_with_predictions[:,3])[0].size
   
@@ -159,5 +159,5 @@ def test_multiple_knn(dataset, lastk = 10):
   training, test = split(dataset)
   coherences = np.array(())
   for i in range(1, lastk + 1):
-      coherences = np.append(coherences,[test_k(training, test, i)]) 
+    coherences = np.append(coherences,[test_k(training, test, i)]) 
   return coherences 
