@@ -63,6 +63,9 @@ def distancia_heuclidiana(point, row):
 
 # distancia de un punto dado a cada punto de dataset, y como resultado obtenemos un numero dado de los puntos mas cercanos  
 def distancia_validation(point, dataset, num_neighbors):
+  print(point, "point")
+  print(dataset, "dataset")
+  print(num_neighbors, "num")
   distance = 0.0
   for i in range(2):
     distance += (point[i] - dataset[:,i:i+1])**2
