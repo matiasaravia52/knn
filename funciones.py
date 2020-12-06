@@ -63,12 +63,9 @@ def distancia_heuclidiana(point, row):
 
 # distancia de un punto dado a cada punto de dataset, y como resultado obtenemos un numero dado de los puntos mas cercanos  
 def distancia_validation(point, dataset, num_neighbors):
-  distance = 0.0
-  for i in range(2):
-    distance += (point[i] - dataset[:,i:i+1])**2
-  distances = np.concatenate((np.sqrt(distance),dataset[:,2:3]),axis=1)  
-  distances = distances[distances[:,0].argsort()] 
-  return distances[0:num_neighbors]
+  distances = [distancia_heuclidiana(point, row) for row in dataset]
+  distances.sort()
+  return np.array(distances[0:num_neighbors])
 
 # en base al resultado anterior de los puntos mas cercanos al dado, clasifica teniendo en cuenta de que clase es la mayoria
 def clasificacion_validation(neighbors):
@@ -111,12 +108,12 @@ def evaluate_algorithm(dataset, n_folds, num_neighbors):
   folds = cross_validation_split(dataset, n_folds)
   scores = list()
   for i in range(len(folds)):
-    dataset2 = np.zeros(dataset.shape, dtype=float)
+    dataset2 = list()
     for j in range(len(dataset)):
       inicio_intervalo = (i*len(folds[i]))
       fin_intervalo = (inicio_intervalo + len(folds[i]) )
       if j not in range(inicio_intervalo , fin_intervalo): 
-        dataset2[j] = dataset[j]  
+        dataset2.append(dataset[j])  
     predicted = k_nearest_neighbors(dataset2, folds[i], num_neighbors)
     actual = [int(row[-1]) for row in folds[i]]
     accuracy = accuracy_metric(actual, predicted)
