@@ -110,13 +110,13 @@ def evaluate_algorithm(dataset, n_folds, num_neighbors):
   iterations_correct = list()
   folds = cross_validation_split(dataset, n_folds)
   scores = list()
-  for i in range(len(folds)): # i = 1 a 5
-    dataset2 = np.array(())
-    for j in range(len(dataset)): # j = 1 a 200
-      inicio_intervalo = (i*len(folds[i])) # inicio_intervalo = 40
-      fin_intervalo = (inicio_intervalo + len(folds[i])) # fin_intervalo = 80
+  for i in range(len(folds)):
+    dataset2 = np.zeros(dataset.shape, dtype=float)
+    for j in range(len(dataset)):
+      inicio_intervalo = (i*len(folds[i]))
+      fin_intervalo = (inicio_intervalo + len(folds[i]) )
       if j not in range(inicio_intervalo , fin_intervalo): 
-        np.append(dataset2, dataset[j])  
+        dataset2[j] = dataset[j]  
     predicted = k_nearest_neighbors(dataset2, folds[i], num_neighbors)
     actual = [int(row[-1]) for row in folds[i]]
     accuracy = accuracy_metric(actual, predicted)
@@ -134,30 +134,3 @@ def best_k(dataset, n_folds, num_neighbors):
     scores.append(score[-1])
     max_score = max(set(scores))
   return [data_score ,(scores.index(max_score) + 1)]
-
-def split(points):
-  points_copy = points.copy()
-  np.random.shuffle(points_copy)
-  
-  split_point = round(len(points)*0.8)
-  
-  training = points_copy[:split_point]
-  test = points_copy[split_point:]
-  
-  return (training, test)  
-
-def test_k(training, test, k):
-  predicciones = np.array(())
-  for point in test:
-    np.append(predicciones, k_nearest_neighbors(training, point, k))
-  
-  positive_predictions = np.where(test[:,2] == predicciones[:,2])[0].size
-  
-  return positive_predictions / len(test)  
-
-def test_multiple_knn(dataset, lastk = 10):
-  training, test = split(dataset)
-  coherences = np.array(())
-  for i in range(1, lastk + 1):
-    coherences = np.append(coherences,[test_k(training, test, i)]) 
-  return coherences 
