@@ -12,6 +12,8 @@ import random
 from random import randrange
 
 import funciones
+from time import time
+import math
 
 matplotlib.use('Agg')
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -83,11 +85,14 @@ def main():
                     num_neighbors = st.number_input("Ingrese un nro de K vecinos proximos como maximo superior", min_value=0, format="%i", value=1, step=1)
                     n_folds = st.number_input("Ingrese la cantidad de particiones que desea para realizar la validacion", min_value=0, format="%i", value=1, step=1)
                 if st.button("Procesar"):
+                    tiempo_inicial = time()
                     if "Calcular el K optimo" not in checked_stocks and "Graficar el K optimo" in checked_stocks:
                         show_file = st.empty()
                         show_file.error("Para graficar debe calcular el k optimo")
                         return
                     load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep, n_folds)
+                    tiempo_final = time()
+                    st.markdown("TIEMPO DE EJECUCION: {} s".format(math.trunc((tiempo_final - tiempo_inicial)*1000)))
             if not file:
                 show_file = st.empty()
                 show_file.info("Cargue un dataset con formato: " + ", ".join([".csv o .txt"]))

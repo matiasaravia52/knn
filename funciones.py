@@ -124,7 +124,9 @@ def evaluate_algorithm(dataset, n_folds, num_neighbors):
   for i in range(len(folds)):
     inicio_intervalo = (i*(len(folds[i])+1)) 
     fin_intervalo = (inicio_intervalo + len(folds[i])) 
-    dataset2 = dataset[inicio_intervalo:fin_intervalo]
+    dataset_inicial = dataset[:inicio_intervalo]
+    dataset_final = dataset[fin_intervalo:]
+    dataset2 = np.concatenate((dataset_inicial, dataset_final))
     predicted = k_nearest_neighbors(dataset2, folds[i], num_neighbors)
     actual = [int(row[-1]) for row in folds[i]]
     accuracy = accuracy_metric(actual, predicted)
