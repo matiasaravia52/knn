@@ -7,15 +7,14 @@ from random import randrange
 import mpld3
 from mpld3 import plugins
 
-# devuelve la distancia heuclidiana
-def distancia_heuclidiana(point, row):
-  return [np.sqrt(((point[0] - row[0])**2 + (point[1] - row[1])**2)), row[-1]]
-
 # devuelve las distancias ordenadas
 def distancia(point, dataset):
-  distances = [distancia_heuclidiana(point, row) for row in dataset]
-  distances.sort()
-  return np.array(distances)    
+  distance = 0.0
+  for i in range(2):
+    distance += (point[i] - dataset[:,i:i+1])**2
+  distances = np.concatenate((np.sqrt(distance),dataset[:,2:3]),axis=1)  
+  distances = distances[distances[:,0].argsort()]    
+  return distances    
 
 # devuelve las clasificaciones segun un conjunto de vecinos y un k_neighbors
 def clasificacion(neighbors, k_neighbors):
@@ -57,6 +56,10 @@ def prediccion_knn(puntos, k_max, step=0.25, plot=False):
       grid_distancias[j,i] = distancia(punto,puntos)
 
   [graficar_k_neighbors(xs, ys, xx, yy,grid_distancias, k_nei, puntos) for k_nei in range(k_max)]
+
+# devuelve la distancia heuclidiana
+def distancia_heuclidiana(point, row):
+  return [np.sqrt(((point[0] - row[0])**2 + (point[1] - row[1])**2)), row[-1]]
 
 # distancia de un punto dado a cada punto de dataset, y como resultado obtenemos un numero dado de los puntos mas cercanos  
 def distancia_validation(point, dataset, num_neighbors):
