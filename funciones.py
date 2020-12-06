@@ -149,7 +149,7 @@ def split(points):
 def test_k(training, test, k):
   predicciones = np.array(())
   for point in test:
-    predicciones.append(predicciones, k_nearest_neighbors(training, point, k))
+    np.append(predicciones, k_nearest_neighbors(training, point, k))
   
   positive_predictions = np.where(test[:,2] == predicciones[:,2])[0].size
   
