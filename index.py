@@ -50,7 +50,7 @@ def load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep, 
         df = pd.read_csv(file)     
     df = format_dataset(df)
     for stock in checked_stocks:
-        if stock == "Ingresar la cantidad de graficos a realizar":
+        if stock == "Clasificar y graficar con distintos valores de k":
             clasificar(df, num_neighbors_graficar)
         elif stock == "Calcular el K optimo" and "Graficar el K optimo" in checked_stocks:
             k_optimo = calc_optimo(df, num_neighbors, n_folds)  
@@ -71,14 +71,14 @@ def main():
             file.seek(0)
             sep = st.selectbox("Seleccione el separador a utilizar", [None, ";", "Tab"])
             st.markdown("**Seleccione lo que desea realizar: **")
-            stocks = ["Ingresar la cantidad de graficos a realizar", "Calcular el K optimo", "Graficar el K optimo"]
+            stocks = ["Clasificar y graficar con distintos valores de k", "Calcular el K optimo", "Graficar el K optimo"]
             check_boxes = [st.checkbox(stock, key=stock) for stock in stocks]
             checked_stocks = [stock for stock, checked in zip(stocks, check_boxes) if checked]
             if file is not None:
                 num_neighbors_graficar = 0
                 num_neighbors = 0
                 n_folds = 0
-                if "Ingresar la cantidad de graficos a realizar" in checked_stocks:
+                if "Clasificar y graficar con distintos valores de k" in checked_stocks:
                     num_neighbors_graficar = st.number_input("Ingrese la cantidad de K que desea graficar", min_value=0, format="%i", value=1, step=1)
                 if "Calcular el K optimo" in checked_stocks:
                     st.markdown("**Realizaremos una validacion cruzada para determinar el K optimo**")
