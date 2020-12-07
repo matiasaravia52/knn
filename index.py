@@ -92,7 +92,7 @@ def main():
                         return
                     load_data(file, num_neighbors, checked_stocks, num_neighbors_graficar, sep, n_folds)
                     tiempo_final = time()
-                    st.markdown("TIEMPO DE EJECUCION: {} s".format(math.trunc((tiempo_final - tiempo_inicial)*1000)))
+                    st.markdown("TIEMPO DE EJECUCION: {} ms".format(math.trunc((tiempo_final - tiempo_inicial)*1000)))
             if not file:
                 show_file = st.empty()
                 show_file.info("Cargue un dataset con formato: " + ", ".join([".csv o .txt"]))
